@@ -490,7 +490,7 @@ SIDEBAR_STYLE = {
     "bottom": 0,
     "width": "auto",
     "padding": "2rem 1rem",
-    "background-color": "#f8f9fa",
+    "background-color": "#191414",
 }
 
 # the styles for the main content position it to the right of the sidebar and
@@ -536,50 +536,64 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page_content(pathname):
     if pathname == "/":
-        return html.Div([
+        return html.Div(style={
+            "text-align": "center"
+        },children=[
             html.H1("Welcome to Spotilyser: An Analysis of Spotify Usage"),
             html.H2("All your Stats at one glance!")
 
             ]         
         )
     elif pathname == "/page-1":
-        return html.Div(children=[dcc.Dropdown(
-                    className="p-5",
+        return html.Div(className="charts",children=[dcc.Dropdown(
                     id='unique-dd',
                     options=[
                         {'label': 'Percentage Of Unique Artists Listened To', 'value': 'artist'},
                         {'label': 'Percentage Of Unique Tracks Listened To', 'value': 'track'}
                     ],
-                    value='artist'
+                    value='artist',
+                    style={
+                "width": "50%",
+                "margin": "auto"
+                }
                     ),
+
                     dcc.Graph(id='unique-plot')
                     ])
     elif pathname == "/page-2":
-        return html.Div(children=[
+        return html.Div(className="charts",children=[
         dcc.Dropdown(
             id='top-artist-dd',
             options=[
                 {'label': 'Top 10 Artists Based On Listening Time', 'value': 'listen-time'},
                 {'label': 'Top 10 Artists Based On Listening Count', 'value': 'listen-count'}
             ],
-            value='listen-time'
+            value='listen-time',
+            style={
+                "width": "50%",
+                "margin": "auto"
+                }
         ),
         dcc.Graph(id='top-artist-plot')
     ])
     elif pathname == "/page-3":
-        return html.Div(children=[
+        return html.Div(className="charts",children=[
         dcc.Dropdown(
             id='top-track-dd',
             options=[
                 {'label': 'Top 10 Tracks Based On Listening Time', 'value': 'listen-time'},
                 {'label': 'Top 10 Tracks Based On Listening Count', 'value': 'listen-count'}
             ],
-            value='listen-time'
+            value='listen-time',
+            style={
+                "width": "50%",
+                "margin": "auto"
+                }
         ),
         dcc.Graph(id='top-track-plot')
     ])
     elif pathname == "/page-4":
-        return html.Div(children=[
+        return html.Div(className="charts",children=[
 
         # html.H1("Daywise Percentage Of Listening Time"),
         # dcc.Graph(
@@ -593,7 +607,7 @@ def render_page_content(pathname):
         )
     ])
     elif pathname == "/page-5":
-        return html.Div(children=[
+        return html.Div(className="charts",children=[
         html.H1("Daytime Streaming Hours"),
         dcc.Graph(
             id='hourwise-time',
@@ -601,7 +615,7 @@ def render_page_content(pathname):
         )
     ])
     elif pathname == "/page-6":
-        return html.Div(children=[
+        return html.Div(className="charts",children=[
         html.H1("Distribution Of Spotify Streaming Over The Year"),
         dcc.Graph(
             id='year-dist',
@@ -609,7 +623,7 @@ def render_page_content(pathname):
         )
     ])
     elif pathname == "/page-7":
-        return html.Div(children=[
+        return html.Div(className="charts",children=[
         html.H1("HeatMap Of Listening Time"),
         dcc.Graph(
             id='listen-heatmap',
@@ -617,12 +631,12 @@ def render_page_content(pathname):
         )
     ])
     elif pathname == "/page-8":
-        return html.Div(children=[
+        return html.Div(className="charts",children=[
         html.H1("WordCloud Of Favourite Artists"),
         html.Img(id='img-wc-artist')
     ])
     elif pathname == "/page-9":
-        return html.Div(children=[
+        return html.Div(className="charts",children=[
         html.H1("WordCloud Of Favourite Tracks"),
         html.Img(id='img-wc-tracks')
     ])
