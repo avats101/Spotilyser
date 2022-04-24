@@ -11,6 +11,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from io import BytesIO
 import base64
+
 from tkinter import *
 from tkinter import filedialog
 
@@ -56,6 +57,7 @@ stream_df['Listening Time (Minutes)'] = stream_df['Time-Played (hh-mm-ss)'].appl
 stream_df.drop(columns=['endTime', "Time-Played (hh-mm-ss)", "msPlayed"], inplace=True)
 
 stream_df.describe()
+
 
 sns.set_style('darkgrid')
 plt.style.use('seaborn-darkgrid')
@@ -267,8 +269,9 @@ b5.update_layout(
 time_spent_hours = stream_df["Listening Time (Hours)"].sum()  # Summation of all
 
 date_df = stream_df["Play-Time"]  # Making a new dataset of time only
-time_difference = (date_df.iloc[list(stream_df.shape)[0]-1] - date_df.iloc[0]) / np.timedelta64(1,
-                                                                           "D")  # Calulating total possible days in days
+
+time_difference = (date_df.iloc[list(stream_df.shape)[0]-1] - date_df.iloc[0]) / np.timedelta64(1,"D")  # Calulating total possible days in days
+
 time_difference_hours = time_difference * 24  # Converting that in hours by multiplying with 24
 
 time_spent_percentage = time_spent_hours / time_difference_hours * 100
@@ -379,6 +382,30 @@ p3 = go.Figure(
     data=go.Pie(values=stream_df["day-name"].value_counts(), labels=stream_df["day-name"].value_counts().index,
                 textinfo='label+percent',
                 insidetextorientation='radial', pull=0.2, rotation=90))
+
+
+# p3.show()
+# tot = sum(list(stream_df["day-name"].value_counts()))
+# perc = list(stream_df["day-name"].value_counts())
+# perc=np.divide(perc,tot)
+# print(perc)
+
+
+# Polar ScatterPlot 1
+ps = go.Figure(
+    go.Scatterpolar(
+        theta=stream_df["day-name"].value_counts().index,
+        mode='markers',
+        r=stream_df["day-name"].value_counts(),
+        fill='toself',
+    )
+)
+ps.update_layout(
+    title="",
+    polar={'radialaxis': {'visible': False}}
+)
+# ps.show()
+
 
 # Bar Chart 1
 b1 = go.Figure(
@@ -534,10 +561,16 @@ app.layout = html.Div(children=[
     #     )
     # ]),
     html.Div(children=[
+
         html.H1("Daywise Percentage Of Listening Time"),
         dcc.Graph(
             id='daywise-time',
             figure=p3
+        html.H1("Daywise Distribution Of Listening Time"),
+        dcc.Graph(
+            id='daywise-time',
+            figure=ps
+
         )
     ]),
     html.Div(children=[
