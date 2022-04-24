@@ -1,3 +1,6 @@
+import dash
+import dash_bootstrap_components as dbc
+from dash import Input, Output, dcc, html
 import json
 from collections import Counter
 import pandas as pd
@@ -474,22 +477,79 @@ wct = WordCloud(background_color="black", width=1000, height=600, max_words=400,
 ax.imshow(wct, interpolation='bilinear')
 plt.axis(False)
 
-# HTML Layout
 
-app.layout = dbc.Container(
-    html.Div(children=[
-        dcc.Dropdown(
-            className="p-5",
-            id='unique-dd',
-            options=[
-                {'label': 'Percentage Of Unique Artists Listened To', 'value': 'artist'},
-                {'label': 'Percentage Of Unique Tracks Listened To', 'value': 'track'}
-            ],
-            value='artist'
+
+app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+# the style arguments for the sidebar. We use position:fixed and a fixed width
+SIDEBAR_STYLE = {
+    "position": "fixed",
+    "top": 0,
+    "left": 0,
+    "bottom": 0,
+    "width": "16rem",
+    "padding": "2rem 1rem",
+    "background-color": "#f8f9fa",
+}
+
+# the styles for the main content position it to the right of the sidebar and
+# add some padding.
+CONTENT_STYLE = {
+    "margin-left": "18rem",
+    "margin-right": "2rem",
+    "padding": "2rem 1rem",
+}
+
+sidebar = html.Div(
+    [
+        html.H2("Sidebar", className="display-4"),
+        html.Hr(),
+        html.P(
+            "A simple sidebar layout with navigation links", className="lead"
         ),
-        dcc.Graph(id='unique-plot')
-    ]),
-    html.Div(children=[
+        dbc.Nav(
+            [
+                dbc.NavLink("Home", href="/", active="exact"),
+                dbc.NavLink("Page 1", href="/page-1", active="exact"),
+                dbc.NavLink("Page 2", href="/page-2", active="exact"),
+                dbc.NavLink("Page 1", href="/page-3", active="exact"),
+                dbc.NavLink("Page 2", href="/page-4", active="exact"),
+                dbc.NavLink("Page 1", href="/page-5", active="exact"),
+                dbc.NavLink("Page 2", href="/page-6", active="exact"),
+                dbc.NavLink("Page 1", href="/page-7", active="exact"),
+                dbc.NavLink("Page 2", href="/page-8", active="exact"),
+                dbc.NavLink("Page 1", href="/page-9", active="exact")
+            ],
+            vertical=True,
+            pills=True,
+        ),
+    ],
+    style=SIDEBAR_STYLE,
+)
+
+content = html.Div(id="page-content", style=CONTENT_STYLE)
+
+app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
+
+
+@app.callback(Output("page-content", "children"), [Input("url", "pathname")])
+def render_page_content(pathname):
+    if pathname == "/":
+        return html.P("This is the content of the home page!")
+    elif pathname == "/page-1":
+        return html.Div(children=[dcc.Dropdown(
+                    className="p-5",
+                    id='unique-dd',
+                    options=[
+                        {'label': 'Percentage Of Unique Artists Listened To', 'value': 'artist'},
+                        {'label': 'Percentage Of Unique Tracks Listened To', 'value': 'track'}
+                    ],
+                    value='artist'
+                    ),
+                    dcc.Graph(id='unique-plot')
+                    ])
+    elif pathname == "/page-2":
+        return html.Div(children=[
         dcc.Dropdown(
             id='top-artist-dd',
             options=[
@@ -499,8 +559,9 @@ app.layout = dbc.Container(
             value='listen-time'
         ),
         dcc.Graph(id='top-artist-plot')
-    ]),
-    html.Div(children=[
+    ])
+    elif pathname == "/page-3":
+        return html.Div(children=[
         dcc.Dropdown(
             id='top-track-dd',
             options=[
@@ -510,8 +571,9 @@ app.layout = dbc.Container(
             value='listen-time'
         ),
         dcc.Graph(id='top-track-plot')
-    ]),
-    html.Div(children=[
+    ])
+    elif pathname == "/page-4":
+        return html.Div(children=[
 
         # html.H1("Daywise Percentage Of Listening Time"),
         # dcc.Graph(
@@ -523,37 +585,52 @@ app.layout = dbc.Container(
             figure=ps
 
         )
-    ]),
-    html.Div(children=[
+    ])
+    elif pathname == "/page-5":
+        return html.Div(children=[
         html.H1("Daytime Streaming Hours"),
         dcc.Graph(
             id='hourwise-time',
             figure=h1
         )
-    ]),
-    html.Div(children=[
+    ])
+    elif pathname == "/page-6":
+        return html.Div(children=[
         html.H1("Distribution Of Spotify Streaming Over The Year"),
         dcc.Graph(
             id='year-dist',
             figure=b5
         )
-    ]),
-    html.Div(children=[
+    ])
+    elif pathname == "/page-7":
+        return html.Div(children=[
         html.H1("HeatMap Of Listening Time"),
         dcc.Graph(
             id='listen-heatmap',
             figure=hm
         )
-    ]),
-    html.Div(children=[
+    ])
+    elif pathname == "/page-8":
+        return html.Div(children=[
         html.H1("WordCloud Of Favourite Artists"),
         html.Img(id='img-wc-artist')
-    ]),
-    html.Div(children=[
+    ])
+    elif pathname == "/page-9":
+        return html.Div(children=[
         html.H1("WordCloud Of Favourite Tracks"),
         html.Img(id='img-wc-tracks')
     ])
-)
+    # elif pathname == "/page-10":
+    #     return html.
+    
+    # If the user tries to reach a different page, return a 404 message
+    return dbc.Jumbotron(
+        [
+            html.H1("404: Not found", className="text-danger"),
+            html.Hr(),
+            html.P(f"The pathname {pathname} was not recognised..."),
+        ]
+    )
 
 
 @app.callback(Output('img-wc-artist', 'src'), [Input('img-wc-artist', 'id')])
@@ -627,4 +704,4 @@ def unique(unique_val):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(port=8888)
