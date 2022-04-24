@@ -14,7 +14,6 @@ import base64
 from tkinter import *
 from tkinter import filedialog
 import dash_bootstrap_components as dbc
-import dash
 
 def get_directory():
     root = Tk()
@@ -367,9 +366,8 @@ ax2 = sns.barplot(x=["False", "True"], y="Percentage", data=weekday_vs_weekend, 
 ax2.set(title="Weekday vs Weekend (Percentage)", xlabel="Is it Weekend", ylabel="Percentage of Songs Played");
 # plt.show()
 
-app = dash.Dash(
-    external_stylesheets=[dbc.themes.BOOTSTRAP]
-)
+app = Dash(__name__)
+    
 
 # Pie Chart 1
 # p1 = px.pie(values=unique_artists_list, names=unique_artists_list_labels, title="Unique Artist Pecentage")
@@ -476,10 +474,12 @@ plt.axis(False)
 
 # HTML Layout
 
-app.layout = dbc.Container(
+app.layout = html.Div(
+    children=[
+
     html.Div(children=[
         dcc.Dropdown(
-            className="p-5",
+            className="right_menu",
             id='unique-dd',
             options=[
                 {'label': 'Percentage Of Unique Artists Listened To', 'value': 'artist'},
@@ -553,7 +553,7 @@ app.layout = dbc.Container(
         html.H1("WordCloud Of Favourite Tracks"),
         html.Img(id='img-wc-tracks')
     ])
-)
+])
 
 
 @app.callback(Output('img-wc-artist', 'src'), [Input('img-wc-artist', 'id')])

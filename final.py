@@ -408,7 +408,8 @@ ps = go.Figure(
 )
 ps.update_layout(
     title="",
-    polar={'radialaxis': {'visible': False}}
+    polar={'radialaxis': {'visible': False}},
+    autosize=True
 )
 # ps.show()
 
@@ -487,7 +488,7 @@ SIDEBAR_STYLE = {
     "top": 0,
     "left": 0,
     "bottom": 0,
-    "width": "16rem",
+    "width": "auto",
     "padding": "2rem 1rem",
     "background-color": "#f8f9fa",
 }
@@ -502,23 +503,23 @@ CONTENT_STYLE = {
 
 sidebar = html.Div(
     [
-        html.H2("Sidebar", className="display-4"),
+        html.H2("Spotilyser", className="display-4"),
         html.Hr(),
         html.P(
-            "A simple sidebar layout with navigation links", className="lead"
+            "", className="lead"
         ),
         dbc.Nav(
             [
                 dbc.NavLink("Home", href="/", active="exact"),
-                dbc.NavLink("Page 1", href="/page-1", active="exact"),
-                dbc.NavLink("Page 2", href="/page-2", active="exact"),
-                dbc.NavLink("Page 1", href="/page-3", active="exact"),
-                dbc.NavLink("Page 2", href="/page-4", active="exact"),
-                dbc.NavLink("Page 1", href="/page-5", active="exact"),
-                dbc.NavLink("Page 2", href="/page-6", active="exact"),
-                dbc.NavLink("Page 1", href="/page-7", active="exact"),
-                dbc.NavLink("Page 2", href="/page-8", active="exact"),
-                dbc.NavLink("Page 1", href="/page-9", active="exact")
+                dbc.NavLink("Unique Artists/Tracks", href="/page-1", active="exact"),
+                dbc.NavLink("Top 10 Artists", href="/page-2", active="exact"),
+                dbc.NavLink("Top 10 Tracks", href="/page-3", active="exact"),
+                dbc.NavLink("Weekly Streaming", href="/page-4", active="exact"),
+                dbc.NavLink("Daily Streaming ", href="/page-5", active="exact"),
+                dbc.NavLink("Monthly Streaming", href="/page-6", active="exact"),
+                dbc.NavLink("Active Hours", href="/page-7", active="exact"),
+                dbc.NavLink("Favourite Artists", href="/page-8", active="exact"),
+                dbc.NavLink("Favourite Tracks", href="/page-9", active="exact")
             ],
             vertical=True,
             pills=True,
@@ -535,7 +536,12 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page_content(pathname):
     if pathname == "/":
-        return html.P("This is the content of the home page!")
+        return html.Div([
+            html.H1("Welcome to Spotilyser: An Analysis of Spotify Usage"),
+            html.H2("All your Stats at one glance!")
+
+            ]         
+        )
     elif pathname == "/page-1":
         return html.Div(children=[dcc.Dropdown(
                     className="p-5",
