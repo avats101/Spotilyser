@@ -367,6 +367,27 @@ p3 = go.Figure(
     data=go.Pie(values=stream_df["day-name"].value_counts(), labels=stream_df["day-name"].value_counts().index,
                 textinfo='label+percent',
                 insidetextorientation='radial', pull=0.2, rotation=90))
+# p3.show()
+# tot = sum(list(stream_df["day-name"].value_counts()))
+# perc = list(stream_df["day-name"].value_counts())
+# perc=np.divide(perc,tot)
+# print(perc)
+
+
+# Polar ScatterPlot 1
+ps = go.Figure(
+    go.Scatterpolar(
+        theta=stream_df["day-name"].value_counts().index,
+        mode='markers',
+        r=stream_df["day-name"].value_counts(),
+        fill='toself',
+    )
+)
+ps.update_layout(
+    title="",
+    polar={'radialaxis': {'visible': False}}
+)
+# ps.show()
 
 # Bar Chart 1
 b1 = go.Figure(
@@ -522,10 +543,10 @@ app.layout = html.Div(children=[
     #     )
     # ]),
     html.Div(children=[
-        html.H1("Daywise Percentage Of Listening Time"),
+        html.H1("Daywise Distribution Of Listening Time"),
         dcc.Graph(
             id='daywise-time',
-            figure=p3
+            figure=ps
         )
     ]),
     html.Div(children=[
