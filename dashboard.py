@@ -43,8 +43,6 @@ stream_df['Listening Time (Minutes)'] = stream_df['Time-Played (hh-mm-ss)'].appl
 
 stream_df.drop(columns=['endTime', "Time-Played (hh-mm-ss)", "msPlayed"], inplace=True)
 
-stream_df.describe()
-
 sns.set_style('darkgrid')
 plt.style.use('seaborn-darkgrid')
 
@@ -255,8 +253,7 @@ b5.update_layout(
 time_spent_hours = stream_df["Listening Time (Hours)"].sum()  # Summation of all
 
 date_df = stream_df["Play-Time"]  # Making a new dataset of time only
-time_difference = (date_df.iloc[10803] - date_df.iloc[0]) / np.timedelta64(1,
-                                                                           "D")  # Calulating total possible days in days
+time_difference = (date_df.iloc[list(stream_df.shape)[0]-1] - date_df.iloc[0]) / np.timedelta64(1,"D")  # Calulating total possible days in days
 time_difference_hours = time_difference * 24  # Converting that in hours by multiplying with 24
 
 time_spent_percentage = time_spent_hours / time_difference_hours * 100
