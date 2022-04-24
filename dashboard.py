@@ -12,9 +12,22 @@ import plotly.graph_objects as go
 from io import BytesIO
 import base64
 
-df1 = pd.read_json("C:/Users/praji/Downloads/my_spotify_data/MyData/StreamingHistory0.json", encoding='utf-8')
-df2 = pd.read_json("C:/Users/praji/Downloads/my_spotify_data/MyData/StreamingHistory1.json", encoding='utf-8')
+from tkinter import *
+from tkinter import filedialog
+
+def get_directory():
+    root = Tk()
+    path = filedialog.askdirectory(title="Choose path to spotify data folder")
+    root.destroy()
+    return path
+
+path = get_directory()+"/"
+
+df1 = pd.read_json(path+"/StreamingHistory0.json", encoding='utf-8')
+df2 = pd.read_json(path+"/StreamingHistory1.json", encoding='utf-8')
 stream_df = pd.concat([df1, df2], ignore_index=True)
+
+
 # stream_df.to_csv("spotify_data.csv")
 
 stream_df['Play-Time'] = pd.to_datetime(stream_df['endTime'])
@@ -42,6 +55,9 @@ stream_df['Listening Time (Hours)'] = stream_df['Time-Played (hh-mm-ss)'].apply(
 stream_df['Listening Time (Minutes)'] = stream_df['Time-Played (hh-mm-ss)'].apply(minutes).round(3)
 
 stream_df.drop(columns=['endTime', "Time-Played (hh-mm-ss)", "msPlayed"], inplace=True)
+
+stream_df.describe()
+
 
 sns.set_style('darkgrid')
 plt.style.use('seaborn-darkgrid')
@@ -253,7 +269,9 @@ b5.update_layout(
 time_spent_hours = stream_df["Listening Time (Hours)"].sum()  # Summation of all
 
 date_df = stream_df["Play-Time"]  # Making a new dataset of time only
+
 time_difference = (date_df.iloc[list(stream_df.shape)[0]-1] - date_df.iloc[0]) / np.timedelta64(1,"D")  # Calulating total possible days in days
+
 time_difference_hours = time_difference * 24  # Converting that in hours by multiplying with 24
 
 time_spent_percentage = time_spent_hours / time_difference_hours * 100
@@ -364,6 +382,8 @@ p3 = go.Figure(
     data=go.Pie(values=stream_df["day-name"].value_counts(), labels=stream_df["day-name"].value_counts().index,
                 textinfo='label+percent',
                 insidetextorientation='radial', pull=0.2, rotation=90))
+
+
 # p3.show()
 # tot = sum(list(stream_df["day-name"].value_counts()))
 # perc = list(stream_df["day-name"].value_counts())
@@ -385,6 +405,7 @@ ps.update_layout(
     polar={'radialaxis': {'visible': False}}
 )
 # ps.show()
+
 
 # Bar Chart 1
 b1 = go.Figure(
@@ -540,10 +561,16 @@ app.layout = html.Div(children=[
     #     )
     # ]),
     html.Div(children=[
+
+        html.H1("Daywise Percentage Of Listening Time"),
+        dcc.Graph(
+            id='daywise-time',
+            figure=p3
         html.H1("Daywise Distribution Of Listening Time"),
         dcc.Graph(
             id='daywise-time',
             figure=ps
+
         )
     ]),
     html.Div(children=[
