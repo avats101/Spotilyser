@@ -3,6 +3,23 @@ body{
     background-color: #1DB954;
 }
 
+div.charts{
+    height: 80vh;
+    margin:auto;
+}
+.charts{
+display:flex;
+align-items: center;
+justify-content: center;
+flex-direction: column;
+align-content: center;
+}
+body{
+    font-family: Bahnschrift;
+    background-color: #1DB954;
+}
+
+
 .display-4{
     color: white;
 }
