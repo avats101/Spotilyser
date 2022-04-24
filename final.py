@@ -18,6 +18,11 @@ from tkinter import *
 from tkinter import filedialog
 import dash_bootstrap_components as dbc
 import dash
+import plotly.offline as po
+import matplotlib.pyplot as plt
+import operator
+import requests
+import key
 
 def get_directory():
     root = Tk()
@@ -478,6 +483,63 @@ wct = WordCloud(background_color="black", width=1000, height=600, max_words=400,
 ax.imshow(wct, interpolation='bilinear')
 plt.axis(False)
 
+if pd.read_csv("top_artists.csv").empty:
+
+    def lastfm_get(payload, COUNTRY):
+        # define headers and URL
+        headers = {'user-agent': USER_AGENT}
+        url = 'https://ws.audioscrobbler.com/2.0/'
+
+        # Add API key and format to the payload
+        payload['country'] = COUNTRY
+        payload['api_key'] = API_KEY
+        payload['format'] = 'json'
+
+        response = requests.get(url, headers=headers, params=payload)
+        return response
+
+    def findTopArtist(country):
+        r = lastfm_get({
+        'method': 'geo.gettopartists'
+        }, country)
+
+        artists = dict()
+  
+        for i in range(50):
+            artists[r.json()['topartists']['artist'][i]['name']] = r.json()['topartists']['artist'][i]['listeners']
+
+        sortedArtists = sorted(artists.items(), key=operator.itemgetter(1))
+        return sortedArtists[-1]
+
+    country = ['Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Anguilla', 'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria', 'Azerbaijan', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bermuda', 'Bhutan', 'Bolivia', 'Bosnia and Herzegovina', 'Botswana', 'Brazil', 'Bulgaria', 'Burundi', 'Cambodia', 'Cameroon', 'Canada', 'Cayman Islands', 'Chad', 'Chile', 'China', 'Colombia', 'Costa Rica', 'Croatia', 'Cuba', 'Cyprus', 'Czech Republic', 'Denmark', 'Djibouti', 'Dominica', 'Ecuador', 'Egypt', 'El Salvador', 'Estonia', 'Ethiopia', 'Fiji', 'Finland', 'France', 'Gabon', 'Georgia', 'Germany', 'Ghana', 'Gibraltar', 'Greece', 'Greenland', 'Grenada', 'Guam', 'Guatemala', 'Guernsey', 'Haiti', 'Honduras', 'Hong Kong', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iraq', 'Ireland', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jersey', 'Jordan', 'Kazakhstan', 'Kenya', 'Kuwait', 'Kyrgyzstan', 'Latvia', 'Lebanon', 'Lithuania', 'Luxembourg', 'Madagascar', 'Malaysia', 'Maldives', 'Mali', 'Mauritius', 'Mexico', 'Monaco', 'Mongolia', 'Montenegro', 'Morocco', 'Namibia', 'Nepal', 'Netherlands', 'New Zealand', 'Nigeria', 'Norway', 'Oman', 'Pakistan', 'Panama', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Puerto Rico', 'Qatar', 'Russian Federation', 'Saudi Arabia', 'Serbia', 'Seychelles', 'Singapore', 'Slovakia', 'South Africa', 'Spain', 'Sri Lanka', 'Swaziland', 'Sweden', 'Switzerland', 'Taiwan', 'Tajikistan', 'Thailand', 'Togo', 'Tunisia', 'Turkey', 'Turkmenistan', 'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Vanuatu', 'Venezuela', 'Yemen', 'Zambia', 'Zimbabwe']
+    codes = ['AFG', 'ALB', 'DZA', 'AND', 'AGO', 'AIA', 'ARG', 'ARM', 'ABW', 'AUS', 'AUT', 'AZE', 'BHR', 'BGD', 'BRB', 'BLR', 'BEL', 'BLZ', 'BEN', 'BMU', 'BTN', 'BOL', 'BIH', 'BWA', 'BRA', 'BGR', 'BDI', 'KHM', 'CMR', 'CAN', 'CYM', 'TCD', 'CHL', 'CHN', 'COL', 'CRI', 'HRV', 'CUB', 'CYP', 'CZE', 'DNK', 'DJI', 'DMA', 'ECU', 'EGY', 'SLV', 'EST', 'ETH', 'FJI', 'FIN', 'FRA', 'GAB', 'GEO', 'DEU', 'GHA', 'GIB', 'GRC', 'GRL', 'GRD', 'GUM', 'GTM', 'GGY', 'HTI', 'HND', 'HKG', 'HUN', 'ISL', 'IND', 'IDN', 'IRQ', 'IRL', 'ISR', 'ITA', 'JAM', 'JPN', 'JEY', 'JOR', 'KAZ', 'KEN', 'KWT', 'KGZ', 'LVA', 'LBN', 'LTU', 'LUX', 'MDG', 'MYS', 'MDV', 'MLI', 'MUS', 'MEX', 'MCO', 'MNG', 'MNE', 'MAR', 'NAM', 'NPL', 'NLD', 'NZL', 'NGA', 'NOR', 'OMN', 'PAK', 'PAN', 'PER', 'PHL', 'POL', 'PRT', 'PRI', 'QAT', 'RUS', 'SAU', 'SRB', 'SYC', 'SGP', 'SVK', 'ZAF', 'ESP', 'LKA', 'SWZ', 'SWE', 'CHE', 'TWN', 'TJK', 'THA', 'TGO', 'TUN', 'TUR', 'TKM', 'UGA', 'UKR', 'ARE', 'GBR', 'USA', 'URY', 'UZB', 'VUT', 'VEN', 'YEM', 'ZMB', 'ZWE']
+
+    API_KEY = key.lastfm
+    USER_AGENT=key.user
+
+    data = dict()
+
+    for i in country:
+        data[i] = findTopArtist(i)
+
+    df1 = pd.DataFrame(list(data.keys()), columns=['Country'])
+    df2 = pd.DataFrame(list(data.values()), columns=["Artist", "Listeners"])
+    df3 = pd.DataFrame(codes, columns = ["Code"])
+
+    df = pd.concat([df1, df2, df3], axis=1)
+    df.to_csv("top_artists.csv", index=False)
+#po.init_notebook_mode(connected = True)
+else:
+    df=pd.read_csv("top_artists.csv")
+data = dict(type='choropleth', 
+            locations = df['Code'], 
+            z = df['Listeners'], 
+            text = df['Artist'])
+
+layout = dict(title = 'Country wise top artists', 
+              geo = dict(projection = {'type':'robinson'}))
+
+x = go.Figure(data = [data], layout = layout)
 
 
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -519,7 +581,9 @@ sidebar = html.Div(
                 dbc.NavLink("Monthly Streaming", href="/page-6", active="exact"),
                 dbc.NavLink("Active Hours", href="/page-7", active="exact"),
                 dbc.NavLink("Favourite Artists", href="/page-8", active="exact"),
-                dbc.NavLink("Favourite Tracks", href="/page-9", active="exact")
+                dbc.NavLink("Favourite Tracks", href="/page-9", active="exact"),
+                dbc.NavLink("Countrywise Top Artist", href="/page-10", active="exact")
+                
             ],
             vertical=True,
             pills=True,
@@ -540,8 +604,8 @@ def render_page_content(pathname):
             "text-align": "center"
         },children=[
             html.H1("Welcome to Spotilyser: An Analysis of Spotify Usage"),
-            html.H2("All your Stats at one glance!")
-
+            html.H2("All your Stats at one glance!"),
+            html.Img(src="../assets/logo.png", width="300", height="300"),
             ]         
         )
     elif pathname == "/page-1":
@@ -640,8 +704,10 @@ def render_page_content(pathname):
         html.H1("WordCloud Of Favourite Tracks"),
         html.Img(id='img-wc-tracks')
     ])
-    # elif pathname == "/page-10":
-    #     return html.
+    elif pathname == "/page-10":
+        return html.Div(children=[
+        dcc.Graph(figure = x)
+        ])
     
     # If the user tries to reach a different page, return a 404 message
     return dbc.Jumbotron(
