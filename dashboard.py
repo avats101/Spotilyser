@@ -565,7 +565,7 @@ app.layout = html.Div(children=[
         html.H1("Daywise Percentage Of Listening Time"),
         dcc.Graph(
             id='daywise-time',
-            figure=p3
+            figure=p3),
         html.H1("Daywise Distribution Of Listening Time"),
         dcc.Graph(
             id='daywise-time',
