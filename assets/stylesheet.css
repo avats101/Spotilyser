@@ -2,6 +2,7 @@ body{
     font-family: Bahnschrift;
     background-color: #1DB954;
 }
+
 div.charts{
     height: 80vh;
     margin:auto;
@@ -17,6 +18,7 @@ body{
     font-family: Bahnschrift;
     background-color: #1DB954;
 }
+
 
 .display-4{
     color: white;
