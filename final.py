@@ -104,7 +104,7 @@ top_10_artist_time_df = stream_df.groupby(["artistName"])[
 
 fig, ax = plt.subplots(figsize=(12, 8))
 ax.bar(top_10_artist_time_df.head(10).index, top_10_artist_time_df["Listening Time (Hours)"].head(10), color='green')
-ax.set(title="My Top 10 Favourite Artist (based on Hours)", xlabel="Artists", ylabel="No. of Hours Songs Played")
+ax.set( xlabel="Artists", ylabel="No. of Hours Songs Played")
 plt.xticks(rotation=75)
 # plt.show()
 
@@ -114,7 +114,7 @@ b1 = go.Figure(
     data=go.Bar(x=top_10_artist_time_df.head(10).index, y=top_10_artist_time_df["Listening Time (Hours)"].head(10),
                 hoverinfo="x+text", hovertext=top_10_artist_time_df["Listening Time (Hours)"].head(10),
                 marker_color="cyan"))
-b1.update_layout(title_text="My Top 10 Favourite Artist (based on Hours)", xaxis_tickangle=-75)
+b1.update_layout(xaxis_tickangle=-75)
 # b1.show()
 
 # ***** Plotly Code *****
@@ -134,7 +134,7 @@ plt.xticks(rotation=75)
 b2 = go.Figure(
     data=go.Bar(x=top_10_artist_count_df.head(10).index, y=top_10_artist_count_df["count"].head(10), hoverinfo="x+text",
                 hovertext=top_10_artist_count_df["count"].head(10), marker_color="cyan"))
-b2.update_layout(title_text="My Top 10 Favourite Artist (based on Listen Count)", xaxis_tickangle=-75)
+b2.update_layout(xaxis_tickangle=-75)
 # b2.show()
 
 # ***** Plotly Code *****
@@ -194,7 +194,7 @@ b3 = go.Figure(
     data=go.Bar(x=top_10_songs_time_df.head(10).index, y=top_10_songs_time_df["Listening Time (Hours)"].head(10),
                 hoverinfo="x+text",
                 hovertext=top_10_songs_time_df["Listening Time (Hours)"].head(10), marker_color="cyan"))
-b3.update_layout(title_text="My Top 10 Favourite Artist (based on Hours Listened)", xaxis_tickangle=-75)
+b3.update_layout(xaxis_tickangle=-75)
 # b3.show()
 
 # ***** Plotly Code *****
@@ -211,7 +211,7 @@ ax2.axhline(top_10_songs_count_df["count"][:100].mean(), linestyle="--", color="
 b4 = go.Figure(
     data=go.Bar(x=top_10_songs_count_df.head(10).index, y=top_10_songs_count_df["count"].head(10), hoverinfo="x+text",
                 hovertext=top_10_songs_count_df["count"].head(10), marker_color="cyan"))
-b4.update_layout(title_text="My Top 10 Favourite Artist (based on Listen Count)", xaxis_tickangle=-75)
+b4.update_layout( xaxis_tickangle=-75)
 # b4.show()
 
 # ***** Plotly Code *****
@@ -265,7 +265,6 @@ b5 = go.Figure(
     data=go.Bar(x=["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
                 y=list(Counter(stream_df['month']).values()), hoverinfo="x+y", marker_color="cyan"))
 b5.update_layout(
-    title_text="Average Spotify Usage Over The Year",
     xaxis_tickangle=-75,
     xaxis_title_text="Months",
     yaxis_title_text="Songs Played Count"
@@ -347,7 +346,6 @@ hm = go.Figure(data=go.Heatmap(
     colorscale="Reds"
 ))
 hm.update_layout(
-    title_text="HeatMap Of Spotify Usage Over the Week",
     xaxis_title_text="Day",
     yaxis_title_text="Time (24 Hour Format)"
 )
@@ -424,26 +422,26 @@ b1 = go.Figure(
     data=go.Bar(x=top_10_artist_time_df.head(10).index, y=top_10_artist_time_df["Listening Time (Hours)"].head(10),
                 hoverinfo="x+text", hovertext=top_10_artist_time_df["Listening Time (Hours)"].head(10),
                 marker_color="cyan"))
-b1.update_layout(title_text="My Top 10 Favourite Artist (based on Hours)", xaxis_tickangle=-75)
+b1.update_layout(xaxis_tickangle=-75)
 
 # Bar Chart 2
 b2 = go.Figure(
     data=go.Bar(x=top_10_artist_count_df.head(10).index, y=top_10_artist_count_df["count"].head(10), hoverinfo="x+text",
                 hovertext=top_10_artist_count_df["count"].head(10), marker_color="cyan"))
-b2.update_layout(title_text="My Top 10 Favourite Artist (based on Listen Count)", xaxis_tickangle=-75)
+b2.update_layout(xaxis_tickangle=-75)
 
 # Bar Chart 3
 b3 = go.Figure(
     data=go.Bar(x=top_10_songs_time_df.head(10).index, y=top_10_songs_time_df["Listening Time (Hours)"].head(10),
                 hoverinfo="x+text",
                 hovertext=top_10_songs_time_df["Listening Time (Hours)"].head(10), marker_color="cyan"))
-b3.update_layout(title_text="My Top 10 Favourite Artist (based on Hours Listened)", xaxis_tickangle=-75)
+b3.update_layout(xaxis_tickangle=-75)
 
 # Bar Chart 4
 b4 = go.Figure(
     data=go.Bar(x=top_10_songs_count_df.head(10).index, y=top_10_songs_count_df["count"].head(10), hoverinfo="x+text",
                 hovertext=top_10_songs_count_df["count"].head(10), marker_color="cyan"))
-b4.update_layout(title_text="My Top 10 Favourite Artist (based on Listen Count)", xaxis_tickangle=-75)
+b4.update_layout(xaxis_tickangle=-75)
 
 # Bar Chart 5
 # print(list(Counter(stream_df['month']).values()))
@@ -452,7 +450,6 @@ b5 = go.Figure(
     data=go.Bar(x=["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
                 y=list(Counter(stream_df['month']).values()), hoverinfo="x+y", marker_color="cyan"))
 b5.update_layout(
-    title_text="Average Spotify Usage Over The Year",
     xaxis_tickangle=-75,
     xaxis_title_text="Months",
     yaxis_title_text="Songs Played Count"
@@ -466,7 +463,6 @@ hm = go.Figure(data=go.Heatmap(
     colorscale="Reds"
 ))
 hm.update_layout(
-    title_text="HeatMap Of Spotify Usage Over the Week",
     xaxis_title_text="Day",
     yaxis_title_text="Time (24 Hour Format)"
 )
@@ -536,8 +532,7 @@ data = dict(type='choropleth',
             z = df['Listeners'], 
             text = df['Artist'])
 
-layout = dict(title = 'Country wise top artists', 
-              geo = dict(projection = {'type':'robinson'}))
+layout = dict(geo = dict(projection = {'type':'robinson'}))
 
 x = go.Figure(data = [data], layout = layout)
 
@@ -601,13 +596,11 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 def render_page_content(pathname):
     if pathname == "/":
         return html.Div(style={
-            "text-align": "center"
-        },children=[
-            html.H1("Welcome to Spotilyser: An Analysis of Spotify Usage"),
+            "text-align": "left", 'float':"left",'margin-top':'100px'},children=[
+            html.Img(src="../assets/logo.png", width="100", height="100", style={'float':"left",'margin-right':"50px"}),
+            html.H1("Welcome to Spotilyser : An Analysis of Spotify Usage"),
             html.H2("All your Stats at one glance!"),
-            html.Img(src="../assets/logo.png", width="300", height="300"),
-            ]         
-        )
+            html.P("Spotilyser is the ultimate amalgamation of visual analytics and your music taste. These two things on the plate create real magic. This wrap includes all the songs users have been listening to, in the past year, the genre they were the most into and their most favourite artists along with minutes streamed and other data. It included the top musicians that users have listened to. Every year, millions of data is generated by Spotify users, using this dashboard many users could gain visual insights for their listening habits. The reason people love this form of analysis is its too personal and can be generated within few seconds.",style={'margin-left':"150px",'width':'60%','font-size':'20px'})]) 
     elif pathname == "/page-1":
         return html.Div(className="charts",children=[dcc.Dropdown(
                     id='unique-dd',
@@ -705,7 +698,8 @@ def render_page_content(pathname):
         html.Img(id='img-wc-tracks')
     ])
     elif pathname == "/page-10":
-        return html.Div(children=[
+        return html.Div(className="charts",children=[
+        html.H1("Chloropleth Map of Countrywise Top Artist"),
         dcc.Graph(figure = x)
         ])
     
@@ -743,14 +737,14 @@ def top_artist(top_artist_dd_value):
                         y=top_10_artist_time_df["Listening Time (Hours)"].head(10),
                         hoverinfo="x+text", hovertext=top_10_artist_time_df["Listening Time (Hours)"].head(10),
                         marker_color="cyan"))
-        b1.update_layout(title_text="My Top 10 Favourite Artist (based on Hours)", xaxis_tickangle=-75)
+        b1.update_layout(xaxis_tickangle=-75)
         return b1
     elif top_artist_dd_value == 'listen-count':
         b2 = go.Figure(
             data=go.Bar(x=top_10_artist_count_df.head(10).index, y=top_10_artist_count_df["count"].head(10),
                         hoverinfo="x+text",
                         hovertext=top_10_artist_count_df["count"].head(10), marker_color="cyan"))
-        b2.update_layout(title_text="My Top 10 Favourite Artist (based on Listen Count)", xaxis_tickangle=-75)
+        b2.update_layout(xaxis_tickangle=-75)
         return b2
 
 
@@ -764,14 +758,14 @@ def top_track(top_track_dd_value):
                         y=top_10_songs_time_df["Listening Time (Hours)"].head(10),
                         hoverinfo="x+text",
                         hovertext=top_10_songs_time_df["Listening Time (Hours)"].head(10), marker_color="cyan"))
-        b3.update_layout(title_text="My Top 10 Favourite Tracks (based on Hours Listened)", xaxis_tickangle=-75)
+        b3.update_layout(xaxis_tickangle=-75)
         return b3
     elif top_track_dd_value == 'listen-count':
         b4 = go.Figure(
             data=go.Bar(x=top_10_songs_count_df.head(10).index, y=top_10_songs_count_df["count"].head(10),
                         hoverinfo="x+text",
                         hovertext=top_10_songs_count_df["count"].head(10), marker_color="cyan"))
-        b4.update_layout(title_text="My Top 10 Favourite Tracks (based on Listen Count)", xaxis_tickangle=-75)
+        b4.update_layout(xaxis_tickangle=-75)
         return b4
 
 
