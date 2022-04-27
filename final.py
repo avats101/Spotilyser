@@ -20,6 +20,9 @@ import dash_bootstrap_components as dbc
 import dash
 import plotly.offline as po
 import matplotlib.pyplot as plt
+from matplotlib.collections import PatchCollection
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
 import operator
 import requests
 import key
@@ -34,7 +37,10 @@ path = get_directory()+"/"
 
 df1 = pd.read_json(path+"/StreamingHistory0.json", encoding='utf-8')
 df2 = pd.read_json(path+"/StreamingHistory1.json", encoding='utf-8')
-stream_df = pd.concat([df1, df2], ignore_index=True)
+df3 = pd.read_json(path+"/StreamingHistory2.json", encoding='utf-8')
+df4 = pd.read_json(path+"/StreamingHistory3.json", encoding='utf-8')
+df5 = pd.read_json(path+"/StreamingHistory4.json", encoding='utf-8')
+stream_df = pd.concat([df1, df2, df3, df4, df5], ignore_index=True)
 
 
 # stream_df.to_csv("spotify_data.csv")
@@ -479,20 +485,24 @@ wct = WordCloud(background_color="black", width=1000, height=600, max_words=400,
 ax.imshow(wct, interpolation='bilinear')
 plt.axis(False)
 
+API_KEY = key.lastfm
+USER_AGENT=key.user
+
+#top artists and songs
+def lastfm_get(payload, COUNTRY):
+    # define headers and URL
+    headers = {'user-agent': USER_AGENT}
+    url = 'https://ws.audioscrobbler.com/2.0/'
+
+    # Add API key and format to the payload
+    payload['country'] = COUNTRY
+    payload['api_key'] = API_KEY
+    payload['format'] = 'json'
+
+    response = requests.get(url, headers=headers, params=payload)
+    return response
+
 if pd.read_csv("top_artists.csv").empty:
-
-    def lastfm_get(payload, COUNTRY):
-        # define headers and URL
-        headers = {'user-agent': USER_AGENT}
-        url = 'https://ws.audioscrobbler.com/2.0/'
-
-        # Add API key and format to the payload
-        payload['country'] = COUNTRY
-        payload['api_key'] = API_KEY
-        payload['format'] = 'json'
-
-        response = requests.get(url, headers=headers, params=payload)
-        return response
 
     def findTopArtist(country):
         r = lastfm_get({
@@ -509,9 +519,6 @@ if pd.read_csv("top_artists.csv").empty:
 
     country = ['Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Anguilla', 'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria', 'Azerbaijan', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bermuda', 'Bhutan', 'Bolivia', 'Bosnia and Herzegovina', 'Botswana', 'Brazil', 'Bulgaria', 'Burundi', 'Cambodia', 'Cameroon', 'Canada', 'Cayman Islands', 'Chad', 'Chile', 'China', 'Colombia', 'Costa Rica', 'Croatia', 'Cuba', 'Cyprus', 'Czech Republic', 'Denmark', 'Djibouti', 'Dominica', 'Ecuador', 'Egypt', 'El Salvador', 'Estonia', 'Ethiopia', 'Fiji', 'Finland', 'France', 'Gabon', 'Georgia', 'Germany', 'Ghana', 'Gibraltar', 'Greece', 'Greenland', 'Grenada', 'Guam', 'Guatemala', 'Guernsey', 'Haiti', 'Honduras', 'Hong Kong', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iraq', 'Ireland', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jersey', 'Jordan', 'Kazakhstan', 'Kenya', 'Kuwait', 'Kyrgyzstan', 'Latvia', 'Lebanon', 'Lithuania', 'Luxembourg', 'Madagascar', 'Malaysia', 'Maldives', 'Mali', 'Mauritius', 'Mexico', 'Monaco', 'Mongolia', 'Montenegro', 'Morocco', 'Namibia', 'Nepal', 'Netherlands', 'New Zealand', 'Nigeria', 'Norway', 'Oman', 'Pakistan', 'Panama', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Puerto Rico', 'Qatar', 'Russian Federation', 'Saudi Arabia', 'Serbia', 'Seychelles', 'Singapore', 'Slovakia', 'South Africa', 'Spain', 'Sri Lanka', 'Swaziland', 'Sweden', 'Switzerland', 'Taiwan', 'Tajikistan', 'Thailand', 'Togo', 'Tunisia', 'Turkey', 'Turkmenistan', 'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Vanuatu', 'Venezuela', 'Yemen', 'Zambia', 'Zimbabwe']
     codes = ['AFG', 'ALB', 'DZA', 'AND', 'AGO', 'AIA', 'ARG', 'ARM', 'ABW', 'AUS', 'AUT', 'AZE', 'BHR', 'BGD', 'BRB', 'BLR', 'BEL', 'BLZ', 'BEN', 'BMU', 'BTN', 'BOL', 'BIH', 'BWA', 'BRA', 'BGR', 'BDI', 'KHM', 'CMR', 'CAN', 'CYM', 'TCD', 'CHL', 'CHN', 'COL', 'CRI', 'HRV', 'CUB', 'CYP', 'CZE', 'DNK', 'DJI', 'DMA', 'ECU', 'EGY', 'SLV', 'EST', 'ETH', 'FJI', 'FIN', 'FRA', 'GAB', 'GEO', 'DEU', 'GHA', 'GIB', 'GRC', 'GRL', 'GRD', 'GUM', 'GTM', 'GGY', 'HTI', 'HND', 'HKG', 'HUN', 'ISL', 'IND', 'IDN', 'IRQ', 'IRL', 'ISR', 'ITA', 'JAM', 'JPN', 'JEY', 'JOR', 'KAZ', 'KEN', 'KWT', 'KGZ', 'LVA', 'LBN', 'LTU', 'LUX', 'MDG', 'MYS', 'MDV', 'MLI', 'MUS', 'MEX', 'MCO', 'MNG', 'MNE', 'MAR', 'NAM', 'NPL', 'NLD', 'NZL', 'NGA', 'NOR', 'OMN', 'PAK', 'PAN', 'PER', 'PHL', 'POL', 'PRT', 'PRI', 'QAT', 'RUS', 'SAU', 'SRB', 'SYC', 'SGP', 'SVK', 'ZAF', 'ESP', 'LKA', 'SWZ', 'SWE', 'CHE', 'TWN', 'TJK', 'THA', 'TGO', 'TUN', 'TUR', 'TKM', 'UGA', 'UKR', 'ARE', 'GBR', 'USA', 'URY', 'UZB', 'VUT', 'VEN', 'YEM', 'ZMB', 'ZWE']
-
-    API_KEY = key.lastfm
-    USER_AGENT=key.user
 
     data = dict()
 
@@ -535,6 +542,104 @@ data = dict(type='choropleth',
 layout = dict(geo = dict(projection = {'type':'robinson'}))
 
 x = go.Figure(data = [data], layout = layout)
+
+if pd.read_csv("top_artists.csv").empty:
+  def findTopSong(country):
+    r = lastfm_get({
+      'method': 'geo.gettoptracks'
+    }, country)
+
+    songs = dict()
+  
+    for i in range(50):
+      songs[r.json()['tracks']['track'][i]['name']] = r.json()['tracks']['track'][i]['listeners']
+  
+    sortedSongs = sorted(songs.items(), key=operator.itemgetter(1))
+    return sortedSongs[-1]
+
+  country = ['Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Anguilla', 'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria', 'Azerbaijan', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bermuda', 'Bhutan', 'Bolivia', 'Bosnia and Herzegovina', 'Botswana', 'Brazil', 'Bulgaria', 'Burundi', 'Cambodia', 'Cameroon', 'Canada', 'Cayman Islands', 'Chad', 'Chile', 'China', 'Colombia', 'Costa Rica', 'Croatia', 'Cuba', 'Cyprus', 'Czech Republic', 'Denmark', 'Djibouti', 'Dominica', 'Ecuador', 'Egypt', 'El Salvador', 'Estonia', 'Ethiopia', 'Fiji', 'Finland', 'France', 'Gabon', 'Georgia', 'Germany', 'Ghana', 'Gibraltar', 'Greece', 'Greenland', 'Grenada', 'Guam', 'Guatemala', 'Guernsey', 'Haiti', 'Honduras', 'Hong Kong', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iraq', 'Ireland', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jersey', 'Jordan', 'Kazakhstan', 'Kenya', 'Kuwait', 'Kyrgyzstan', 'Latvia', 'Lebanon', 'Lithuania', 'Luxembourg', 'Madagascar', 'Malaysia', 'Maldives', 'Mali', 'Mauritius', 'Mexico', 'Monaco', 'Mongolia', 'Montenegro', 'Morocco', 'Namibia', 'Nepal', 'Netherlands', 'New Zealand', 'Nigeria', 'Norway', 'Oman', 'Pakistan', 'Panama', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Puerto Rico', 'Qatar', 'Russian Federation', 'Saudi Arabia', 'Serbia', 'Seychelles', 'Singapore', 'Slovakia', 'South Africa', 'Spain', 'Sri Lanka', 'Swaziland', 'Sweden', 'Switzerland', 'Taiwan', 'Tajikistan', 'Thailand', 'Togo', 'Tunisia', 'Turkey', 'Turkmenistan', 'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Vanuatu', 'Venezuela', 'Yemen', 'Zambia', 'Zimbabwe']
+  codes = ['AFG', 'ALB', 'DZA', 'AND', 'AGO', 'AIA', 'ARG', 'ARM', 'ABW', 'AUS', 'AUT', 'AZE', 'BHR', 'BGD', 'BRB', 'BLR', 'BEL', 'BLZ', 'BEN', 'BMU', 'BTN', 'BOL', 'BIH', 'BWA', 'BRA', 'BGR', 'BDI', 'KHM', 'CMR', 'CAN', 'CYM', 'TCD', 'CHL', 'CHN', 'COL', 'CRI', 'HRV', 'CUB', 'CYP', 'CZE', 'DNK', 'DJI', 'DMA', 'ECU', 'EGY', 'SLV', 'EST', 'ETH', 'FJI', 'FIN', 'FRA', 'GAB', 'GEO', 'DEU', 'GHA', 'GIB', 'GRC', 'GRL', 'GRD', 'GUM', 'GTM', 'GGY', 'HTI', 'HND', 'HKG', 'HUN', 'ISL', 'IND', 'IDN', 'IRQ', 'IRL', 'ISR', 'ITA', 'JAM', 'JPN', 'JEY', 'JOR', 'KAZ', 'KEN', 'KWT', 'KGZ', 'LVA', 'LBN', 'LTU', 'LUX', 'MDG', 'MYS', 'MDV', 'MLI', 'MUS', 'MEX', 'MCO', 'MNG', 'MNE', 'MAR', 'NAM', 'NPL', 'NLD', 'NZL', 'NGA', 'NOR', 'OMN', 'PAK', 'PAN', 'PER', 'PHL', 'POL', 'PRT', 'PRI', 'QAT', 'RUS', 'SAU', 'SRB', 'SYC', 'SGP', 'SVK', 'ZAF', 'ESP', 'LKA', 'SWZ', 'SWE', 'CHE', 'TWN', 'TJK', 'THA', 'TGO', 'TUN', 'TUR', 'TKM', 'UGA', 'UKR', 'ARE', 'GBR', 'USA', 'URY', 'UZB', 'VUT', 'VEN', 'YEM', 'ZMB', 'ZWE']
+
+  dataSongs = dict()
+
+  for i in country:
+    dataSongs[i] = findTopSong(i)
+
+  dfs1 = pd.DataFrame(list(dataSongs.keys()), columns=['Country'])
+  dfs2 = pd.DataFrame(list(dataSongs.values()), columns=["Songs", "Listeners"])
+  dfs3 = pd.DataFrame(codes, columns = ["Code"])
+
+  dfs = pd.concat([dfs1, dfs2, dfs3], axis=1)
+  dfs.to_csv("top_songs.csv", index=False)
+
+else:
+    dfs=pd.read_csv("top_songs.csv")
+
+dataSongs = dict(type='choropleth', 
+            locations = dfs['Code'], 
+            z = dfs['Listeners'], 
+            text = dfs['Songs'])
+
+layoutSongs = dict(geo = dict(projection = {'type':'robinson'}))
+
+y = go.Figure(data = [dataSongs], layout = layoutSongs)
+
+# Bubble plot for top Genres
+def getTopGenre():
+    sp = spotipy.Spotify(
+        auth_manager=SpotifyOAuth(
+        scope="user-follow-read user-read-recently-played user-read-playback-position user-top-read user-read-email user-read-private user-library-read",
+        redirect_uri="http://example.com",
+        client_id='204d99eaea4044d08a4d5c06444cb58a',
+        client_secret='ac11837bbd6e410da35bcbd3a1b05a7c',
+        show_dialog=True,
+        cache_path="token.txt"
+        )
+    )
+    result = sp.current_user_top_artists()
+
+    genres = []
+    unique = set()
+
+    for i in range(20):
+        for j in result['items'][i]['genres']:
+            genres.append(j)
+            unique.add(j)
+
+    topGenres = dict()
+
+    for i in unique:
+        topGenres[i] = genres.count(i)
+
+    return sorted(topGenres.items(), key=operator.itemgetter(1))
+
+def nested_circles(data, labels=None, c=None, ax=None, cmap=None, norm=None, textkw={}):
+    ax = ax or plt.gca()
+    data = np.array(data)
+    R = np.sqrt(data/data.max())
+    p = [plt.Circle((0,r), radius=r) for r in R[::-1]]
+    arr = data[::-1] if c is None else np.array(c[::-1])
+    col = PatchCollection(p, cmap=cmap, norm=norm, array=arr)
+
+    ax.add_collection(col)
+    ax.axis("off")
+    ax.set_aspect("equal")
+    ax.autoscale()
+
+    if labels is not None:
+        kw = dict(color="white", va="center", ha="center")
+        kw.update(textkw)
+        ax.text(0, R[0], labels[0], **kw)
+        for i in range(1, len(R)):
+            ax.text(0, R[i]+R[i-1], labels[i], **kw)
+    return col
+
+dfg = pd.DataFrame(getTopGenre(), columns=["Genre", "Count"])
+
+count = list(dfg['Count'])[-4:]
+labels = list(dfg['Genre'])[-4:]
+circles = nested_circles(count, labels=labels, cmap="tab10", textkw=dict(color = "black", fontsize=14))
+#plt.savefig('..assets/genre.png')
 
 
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -577,7 +682,9 @@ sidebar = html.Div(
                 dbc.NavLink("Active Hours", href="/page-7", active="exact"),
                 dbc.NavLink("Favourite Artists", href="/page-8", active="exact"),
                 dbc.NavLink("Favourite Tracks", href="/page-9", active="exact"),
-                dbc.NavLink("Countrywise Top Artist", href="/page-10", active="exact")
+                dbc.NavLink("Favourite Genres", href="/page-10", active="exact"),
+                dbc.NavLink("Countrywise Top Artist", href="/page-11", active="exact"),
+                dbc.NavLink("Countrywise Top Track", href="/page-12", active="exact")
                 
             ],
             vertical=True,
@@ -699,8 +806,18 @@ def render_page_content(pathname):
     ])
     elif pathname == "/page-10":
         return html.Div(className="charts",children=[
+        html.H1("Bubble Plot Of Top Genres"),
+        html.Img(src='../assets/genre.png',style={'width':'auto','height':'auto'})
+        ])
+    elif pathname == "/page-11":
+        return html.Div(className="charts",children=[
         html.H1("Chloropleth Map of Countrywise Top Artist"),
         dcc.Graph(figure = x)
+        ])
+    elif pathname == "/page-12":
+        return html.Div(className="charts",children=[
+        html.H1("Chloropleth Map of Countrywise Top Track"),
+        dcc.Graph(figure = y)
         ])
     
     # If the user tries to reach a different page, return a 404 message
@@ -725,7 +842,6 @@ def make_image(b):
     img = BytesIO()
     wct.save(img, format="PNG")
     return 'data:image/png;base64,{}'.format(base64.b64encode(img.getvalue()).decode())
-
 
 @app.callback(Output(component_id='top-artist-plot', component_property='figure'),
               [Input(component_id='top-artist-dd', component_property='value')])
