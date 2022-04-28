@@ -590,8 +590,8 @@ def getTopGenre():
         auth_manager=SpotifyOAuth(
         scope="user-follow-read user-read-recently-played user-read-playback-position user-top-read user-read-email user-read-private user-library-read",
         redirect_uri="http://example.com",
-        client_id='204d99eaea4044d08a4d5c06444cb58a',
-        client_secret='ac11837bbd6e410da35bcbd3a1b05a7c',
+        client_id=key.spotipy_id,
+        client_secret=key.spotipy_secret,
         show_dialog=True,
         cache_path="token.txt"
         )
