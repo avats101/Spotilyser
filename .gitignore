@@ -162,3 +162,4 @@ cython_debug/
 top_artists.csv
 top_songs.csv
 key.py
+token.txt

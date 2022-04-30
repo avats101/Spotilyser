@@ -42,7 +42,7 @@ df2 = pd.read_json(path+"/StreamingHistory1.json", encoding='utf-8')
 # df5 = pd.read_json(path+"/StreamingHistory4.json", encoding='utf-8')
 # stream_df = pd.concat([df1, df2, df3, df4, df5], ignore_index=True)
 stream_df = pd.concat([df1, df2], ignore_index=True)
-
+#Add dfs according to the number of input JSON files.
 
 # stream_df.to_csv("spotify_data.csv")
 
