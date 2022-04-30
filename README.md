@@ -9,6 +9,14 @@
 4. Run app.py and open it in your local browser at the hosted port.
 
 ## Designs
+<p align="center">
+  <img  src="img/1.png">
+  <img  src="img/2.png">
+  <img  src="img/3.png">
+  <img  src="img/4.png">
+  <img  src="img/5.png">
+  <img  src="img/6.png">
+</p>
 
 ## Contributors
 

@@ -37,10 +37,11 @@ path = get_directory()+"/"
 
 df1 = pd.read_json(path+"/StreamingHistory0.json", encoding='utf-8')
 df2 = pd.read_json(path+"/StreamingHistory1.json", encoding='utf-8')
-df3 = pd.read_json(path+"/StreamingHistory2.json", encoding='utf-8')
-df4 = pd.read_json(path+"/StreamingHistory3.json", encoding='utf-8')
-df5 = pd.read_json(path+"/StreamingHistory4.json", encoding='utf-8')
-stream_df = pd.concat([df1, df2, df3, df4, df5], ignore_index=True)
+# df3 = pd.read_json(path+"/StreamingHistory2.json", encoding='utf-8')
+# df4 = pd.read_json(path+"/StreamingHistory3.json", encoding='utf-8')
+# df5 = pd.read_json(path+"/StreamingHistory4.json", encoding='utf-8')
+# stream_df = pd.concat([df1, df2, df3, df4, df5], ignore_index=True)
+stream_df = pd.concat([df1, df2], ignore_index=True)
 
 
 # stream_df.to_csv("spotify_data.csv")
@@ -543,7 +544,7 @@ layout = dict(geo = dict(projection = {'type':'robinson'}))
 
 x = go.Figure(data = [data], layout = layout)
 
-if pd.read_csv("top_artists.csv").empty:
+if pd.read_csv("top_songs.csv").empty:
   def findTopSong(country):
     r = lastfm_get({
       'method': 'geo.gettoptracks'
