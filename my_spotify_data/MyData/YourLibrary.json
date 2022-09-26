@@ -1,0 +1,60 @@
+{
+  "tracks": [
+    {
+      "artist": "Vaundy",
+      "album": "裸の勇者",
+      "track": "裸の勇者",
+      "uri": "spotify:track:3k64vNcgYPkETG7TNgpW4o"
+    },
+    {
+      "artist": "Aimer",
+      "album": "Daydream",
+      "track": "カタオモイ",
+      "uri": "spotify:track:6g93YtKKHU2H1qIqhLIL0Y"
+    }
+  ],
+  "albums": [
+    {
+      "artist": "Arijit Singh",
+      "album": "Yours Truly Arijit",
+      "uri": "spotify:album:3tzrtZvTODgW7tDew5E7nb"
+    }
+  ],
+  "shows": [
+    {
+      "name": "Inspiher",
+      "publisher": "ACM-W VIT",
+      "uri": "spotify:show:3CjjHcQMz8ET4QqsDQaLkX"
+    },
+    {
+      "name": "Lex Fridman Podcast",
+      "publisher": "Lex Fridman",
+      "uri": "spotify:show:2MAi0BvDc6GTFvKFPXnkCL"
+    },
+    {
+      "name": "Microsoft Research Podcast",
+      "publisher": "Researchers across the Microsoft research community",
+      "uri": "spotify:show:4ndjUXyL0hH1FXHgwIiTWU"
+    },
+    {
+      "name": "Stuff You Should Know",
+      "publisher": "iHeartPodcasts",
+      "uri": "spotify:show:0ofXAdFIQQRsCYj9754UFx"
+    },
+    {
+      "name": "TED Talks Daily",
+      "publisher": "TED",
+      "uri": "spotify:show:1VXcH8QHkjRcTCEd88U3ti"
+    }
+  ],
+  "episodes": [
+  ],
+  "bannedTracks": [
+  ],
+  "artists": [
+  ],
+  "bannedArtists": [
+  ],
+  "other": [
+  ]
+}

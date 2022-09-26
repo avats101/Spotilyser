@@ -25,7 +25,11 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import operator
 import requests
+import webbrowser
+import pickle
 import key
+from sklearn import preprocessing
+
 
 def get_directory():
     root = Tk()
@@ -37,8 +41,8 @@ path = get_directory()+"/"
 
 df1 = pd.read_json(path+"/StreamingHistory0.json", encoding='utf-8')
 df2 = pd.read_json(path+"/StreamingHistory1.json", encoding='utf-8')
-# df3 = pd.read_json(path+"/StreamingHistory2.json", encoding='utf-8')
-# df4 = pd.read_json(path+"/StreamingHistory3.json", encoding='utf-8')
+df3 = pd.read_json(path+"/StreamingHistory2.json", encoding='utf-8')
+df4 = pd.read_json(path+"/StreamingHistory3.json", encoding='utf-8')
 # df5 = pd.read_json(path+"/StreamingHistory4.json", encoding='utf-8')
 # stream_df = pd.concat([df1, df2, df3, df4, df5], ignore_index=True)
 stream_df = pd.concat([df1, df2], ignore_index=True)
@@ -643,6 +647,96 @@ circles = nested_circles(count, labels=labels, cmap="tab10", textkw=dict(color =
 #plt.savefig('..assets/genre.png')
 
 
+#############################################################################################################
+###################################### SENTIMENT ANALYSIS ###################################################
+#############################################################################################################
+def getAccessToken():
+    auth_url = 'https://accounts.spotify.com/api/token'
+    clientID = key.spotipy_id
+    clientSecret = key.spotipy_secret
+
+    data = {
+        'grant_type': 'client_credentials',
+        'client_id': clientID,
+        'client_secret': clientSecret,
+    }
+
+    auth_response = requests.post(auth_url, data = data)
+    access_token = auth_response.json().get('access_token')
+    return access_token
+
+def getAudioID(name):
+  endpoint = "https://api.spotify.com/v1/search?q=track:" + name + "&type=track"
+
+  headers = {
+        'Authorization': 'Bearer {}'.format(getAccessToken())
+    }
+
+  response = requests.get(endpoint, headers = headers)
+  if len(response.json().get('tracks').get('items')) != 0 and response.json() is not None:
+    return response.json().get('tracks').get('items')[0].get('id')
+  else:
+    return 'noIDfound'
+  # print(response.json())
+
+def getAudioFeatures(id):
+  endpoint = "https://api.spotify.com/v1/audio-features/" + id
+
+  headers = {
+        'Authorization': 'Bearer {}'.format(getAccessToken())
+    }
+
+  response = requests.get(endpoint, headers = headers)
+
+  return response.json()
+
+loaded_model = pickle.load(open('finalized_model.sav', 'rb'))
+result = loaded_model
+
+#top_10_songs_count_df = top_10_songs_count_df.dropna(inplace = True)
+
+top10songs = top_10_songs_count_df.index.tolist()
+top10songs = top10songs[:10]
+
+features = []
+for i in top10songs:
+    song = getAudioFeatures(getAudioID(i))
+    features.append(song)  
+
+acousticness = []
+danceability = []
+liveness = []
+loudness = []
+speechiness = []
+valence = []
+
+for i in features:
+  acousticness.append(i.get('acousticness'))
+  danceability.append(i.get('danceability'))
+  liveness.append(i.get('liveness'))
+  loudness.append(i.get('loudness'))
+  speechiness.append(i.get('speechiness'))
+  valence.append(i.get('valence'))
+
+mood10 = pd.DataFrame(list(zip(acousticness, danceability, liveness, loudness, speechiness, valence)), columns=['Acousticness', 'Danceability', 'Liveness', 'Loudness', 'Speechiness', 'Valence',])
+
+arrl = np.array(loudness)
+min_max_scaler = preprocessing.MinMaxScaler()
+loudness_scaled = min_max_scaler.fit_transform(arrl.reshape(-1,1))
+mood10['Loudness'] = pd.DataFrame(loudness_scaled)
+
+mood10 = mood10.dropna()
+print(mood10)
+print(type(mood10))
+
+y_pred = result.predict(mood10)
+definitionsSong = ['Happy','Romantic','Sad']
+reversefactorSong = dict(zip(range(4),definitionsSong))
+predSong = np.vectorize(reversefactorSong.get)(y_pred)
+
+ct = Counter(predSong)
+mood = ct.most_common(1)[0][0]
+
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 # the style arguments for the sidebar. We use position:fixed and a fixed width
@@ -685,8 +779,8 @@ sidebar = html.Div(
                 dbc.NavLink("Favourite Tracks", href="/page-9", active="exact"),
                 dbc.NavLink("Favourite Genres", href="/page-10", active="exact"),
                 dbc.NavLink("Countrywise Top Artist", href="/page-11", active="exact"),
-                dbc.NavLink("Countrywise Top Track", href="/page-12", active="exact")
-                
+                dbc.NavLink("Countrywise Top Track", href="/page-12", active="exact"),
+                dbc.NavLink("Overall Mood of Top 10 Songs", href="/page-13", active="exact")  
             ],
             vertical=True,
             pills=True,
@@ -820,6 +914,19 @@ def render_page_content(pathname):
         html.H1("Chloropleth Map of Countrywise Top Track"),
         dcc.Graph(figure = y)
         ])
+    elif pathname == "/page-13":
+        #picsrc = ''
+        if mood == "Happy":
+            picsrc = '../assets/happy.png'
+        elif mood == "Sad":
+            picsrc = '../assets/sad.png'
+        elif mood == "Romantic":
+            picsrc = '../assets/romantic.jpg'
+        return html.Div(className="charts", children=[
+        html.H1("Predicted Mood for Top 10 Songs"),
+        html.H2(mood),
+        html.Img(src=picsrc,style={'width':'350px','height':'auto'})
+        ])
     
     # If the user tries to reach a different page, return a 404 message
     return dbc.Jumbotron(
@@ -901,4 +1008,5 @@ def unique(unique_val):
 
 
 if __name__ == "__main__":
+    webbrowser.open_new('http://127.0.0.1:8888/')
     app.run_server(port=8888)
